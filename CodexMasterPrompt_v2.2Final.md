@@ -444,7 +444,7 @@ YAGNI
 
 除非能明确证明：
 
-这个抽象会显著减少未来多个游戏站的重复工作。
+这个抽象会显著减少未来多个游戏站的重复开发成本。
 
 
 不要为了：
@@ -470,7 +470,263 @@ YAGNI
 预先实现架构。
 
 
-# 5. 技术方向
+# 5. Architecture Design Principles
+
+除 KISS / YAGNI / 80-20 外：
+
+GAME_SITE_STARTER 的代码架构还必须遵守以下原则。
+
+
+## 5.1 High Cohesion（高内聚）
+
+同一个模块内部的职责应该尽量集中。
+
+例如：
+
+- SEO 相关能力集中管理
+- Game Config 集中管理全站配置
+- Game Fact / Entity Data 集中管理结构化游戏事实
+- Content 层负责文章和页面内容
+- Search / Filter 的交互逻辑集中在对应能力中
+- Navigation 与站点结构逻辑保持清晰边界
+- Patch-sensitive 数据的维护路径应清晰
+
+避免：
+
+同一种逻辑散落在大量页面、组件、配置和内容文件中。
+
+目标：
+
+修改一个能力时，
+尽可能只需要修改少量明确位置。
+
+
+## 5.2 Low Coupling（低耦合）
+
+不同模块之间应尽量通过清晰、稳定的数据结构或接口协作。
+
+避免：
+
+- 一个页面直接依赖大量内部实现
+- 一个组件知道过多其他模块细节
+- Feature Flag 到处散落大量 if 判断
+- SEO 规则复制到每个页面
+- Game Facts 被重复写进 Content
+- Navigation、Homepage、Sitemap 各自维护一套模块启停状态
+- 删除一个 Entity 模块导致大量无关模块报错
+
+目标：
+
+一个模块被：
+
+- 关闭
+- 删除
+- 替换
+- 扩展
+
+时，
+
+不应该要求大面积修改整个 Starter。
+
+
+## 5.3 Modular Design（模块化）
+
+Starter 应由少量职责清晰的模块组成。
+
+可以考虑的逻辑模块包括：
+
+- Config
+- Content
+- Game Facts / Data
+- Page / Route
+- SEO
+- Navigation
+- Search / Filter
+- Shared UI
+- Tool-specific modules
+
+但：
+
+不要为了“模块化”制造大量只有一两个文件、没有真实独立职责的小模块。
+
+模块边界：
+
+必须来自真实业务职责。
+
+不是为了目录结构看起来高级。
+
+
+## 5.4 Adaptable Design（弹性 / 适配性）
+
+这里的“弹性”不是：
+
+云基础设施自动扩容。
+
+这里指：
+
+Starter 可以适应不同游戏结构，
+
+而不需要每次重写核心架构。
+
+
+例如：
+
+Game A 有：
+
+- heroes
+- items
+- bosses
+
+
+Game B 有：
+
+- classes
+- weapons
+- maps
+
+
+Game C 没有：
+
+- heroes
+- bosses
+- market
+
+
+Starter 都应该能够合理工作。
+
+
+但：
+
+不要为了支持所有理论上的游戏类型，
+
+设计万能动态框架。
+
+
+目标仍然是：
+
+80% 通用
++
+20% 项目定制。
+
+
+## 5.5 Replaceable Modules（可替换）
+
+对于未来可能发生变化的能力：
+
+尽量避免和 Starter 核心强绑定。
+
+
+例如：
+
+V1 Search 可以使用 Pagefind。
+
+未来数据量显著增长后：
+
+可以替换搜索实现。
+
+
+但替换 Search 不应该要求重写：
+
+- 页面内容模型
+- URL
+- SEO
+- Game Facts
+- Page Inventory
+- 基础 Layout
+
+
+同理：
+
+当前可能使用：
+
+JSON / Content Collections
+
+作为数据来源。
+
+
+未来如果真实需求要求：
+
+API / Database / Dynamic Data
+
+应允许局部升级。
+
+
+但当前不要为了未来数据库：
+
+提前创建复杂 Repository / ORM / Adapter 层。
+
+
+## 5.6 Stable Core, Flexible Edge（核心稳定，边缘灵活）
+
+Starter 应明确区分：
+
+### Stable Core
+
+相对稳定、不同游戏都需要的能力：
+
+- Game Config
+- SEO rules / helpers
+- Content conventions
+- Game Fact conventions
+- Page Inventory conventions
+- Shared Layout
+- Navigation principles
+- Routing patterns
+- QA-related structure
+
+
+### Flexible Edge
+
+不同游戏可能变化较大的能力：
+
+- 特定 Entity 类型
+- 游戏专属 Database
+- Calculator
+- Planner
+- 特殊 Tool
+- 特殊页面
+- 特殊品牌主题
+
+
+原则：
+
+不要让某个具体游戏的特殊需求污染 Starter Core。
+
+
+理想结果：
+
+GAME_SITE_STARTER Core
+尽量稳定
+
+具体游戏差异
+尽量放在：
+
+- config
+- data
+- content
+- feature modules
+
+
+目标是：
+
+Clone Starter
+↓
+换配置
+↓
+换数据
+↓
+换内容
+↓
+少量定制
+↓
+上线
+
+而不是：
+
+每做一个新游戏都重新改底层架构。
+
+
+# 6. 技术方向
 
 当前首选假设：
 
@@ -554,7 +810,7 @@ Recommended Framework
 这种逃避结论的回答。
 
 
-# 6. 禁止虚假规模 Benchmark
+# 7. 禁止虚假规模 Benchmark
 
 部分问题只有真实内容规模下才能可靠验证。
 
@@ -601,7 +857,7 @@ Re-evaluation Threshold
 性能承诺。
 
 
-# 7. Page Inventory：必须 Single Source of Truth
+# 8. Page Inventory：必须 Single Source of Truth
 
 GAME_SOP_2.1 中的 Page Inventory 是 Starter 的核心架构问题。
 
@@ -670,7 +926,7 @@ Phase 1 必须：
 其他地方全部派生。
 
 
-# 8. Game Fact：必须 Single Source of Truth
+# 9. Game Fact：必须 Single Source of Truth
 
 除了页面状态，
 
@@ -785,7 +1041,7 @@ Affected Pages
 等透明方案。
 
 
-# 9. SOP 与 Starter 的关系
+# 10. SOP 与 Starter 的关系
 
 GAME_SOP_2.1
 
@@ -830,7 +1086,7 @@ Starter 可以保留：
 不维护第二份完整 SOP。
 
 
-# 10. 数据与内容原则
+# 11. 数据与内容原则
 
 数据层参考：
 
@@ -897,7 +1153,7 @@ Starter 必须允许：
 不要设计复杂 CMS。
 
 
-# 11. Feature Flags
+# 12. Feature Flags
 
 Starter 需要简单 Feature Flags。
 
@@ -940,7 +1196,16 @@ Feature Flags 必须：
 - 权限系统
 
 
-# 12. SEO 与性能原则
+Feature Flag 状态：
+
+应尽可能由一个明确的配置源管理。
+
+不要让模块启停状态：
+
+散落在多个页面和组件中。
+
+
+# 13. SEO 与性能原则
 
 SEO：
 
@@ -1030,7 +1295,7 @@ V1：
 设计 Starter。
 
 
-# 13. Mobile First
+# 14. Mobile First
 
 必须保证：
 
@@ -1062,7 +1327,7 @@ SEO
 共同要求。
 
 
-# 14. Phase 1：Architecture
+# 15. Phase 1：Architecture
 
 只有在我明确确认 Phase 0 后：
 
@@ -1153,6 +1418,46 @@ Recommended Framework
 
 
 保持简单。
+
+
+不要为了展示架构能力：
+
+加入无意义层级。
+
+
+同时必须说明：
+
+### Architecture Principles Mapping
+
+请结合真实目录结构、模块依赖和数据流，
+
+说明 Proposed Architecture 如何具体满足：
+
+- High Cohesion
+- Low Coupling
+- Modular Design
+- Adaptable Design
+- Replaceable Modules
+- Stable Core, Flexible Edge
+
+
+不要只写：
+
+“本架构遵循高内聚低耦合。”
+
+必须举具体例子。
+
+
+至少回答：
+
+- SEO 为什么不会散落到所有页面？
+- Game Config 如何成为统一配置入口？
+- Game Fact 与 Content 如何保持边界？
+- Feature Flags 如何避免散落？
+- Search 将来替换时，哪些模块不需要修改？
+- 一个 Entity 模块关闭后，为什么不会破坏其他模块？
+- 某个游戏的特殊 Tool 应放在哪里？
+- 如何防止具体游戏需求污染 Starter Core？
 
 
 同时必须包含：
@@ -1299,6 +1604,13 @@ Related Guide
 如何保持一致。
 
 
+同时说明：
+
+Feature Flag 状态由哪里统一管理，
+
+避免同一个模块状态在多个地方重复定义。
+
+
 ## 10. Performance + Interaction
 
 说明：
@@ -1331,11 +1643,14 @@ Related Guide
 
 - 过度抽象
 - Entity 太写死
+- 模块边界不清
+- 高耦合
 - Feature Flag 与 Route 漂移
 - Game Fact 重复维护
 - Thin Pages
 - Client JS 过多
 - Search 扩展风险
+- 特殊游戏需求污染 Starter Core
 
 
 ### Verified
@@ -1417,7 +1732,7 @@ Phase 8 — Real Game Smoke Test
 Phase 1 禁止执行这些阶段。
 
 
-# 15. Disposable Technical Spike
+# 16. Disposable Technical Spike
 
 Phase 1 允许进行非常有限的验证性 spike。
 
@@ -1465,7 +1780,7 @@ Spike 必须与正式 GAME_SITE_STARTER 仓库完全隔离。
 仅用于验证。
 
 
-第 16 节中的正式仓库禁止项：
+第 17 节中的正式仓库禁止项：
 
 不适用于 spike 临时沙盒。
 
@@ -1527,7 +1842,7 @@ Spike 必须与正式 GAME_SITE_STARTER 仓库完全隔离。
     做没有决策价值的测试。
 
 
-# 16. Phase 1 硬停止
+# 17. Phase 1 硬停止
 
 完成：
 
@@ -1567,7 +1882,7 @@ docs/ARCHITECTURE_PROPOSAL.md
 正式 Starter 根目录。
 
 
-第 15 节允许的：
+第 16 节允许的：
 
 仓库外 disposable spike
 
@@ -1588,7 +1903,7 @@ docs/ARCHITECTURE_PROPOSAL.md
 才能进入正式实现阶段。
 
 
-# 17. 最终判断标准
+# 18. 最终判断标准
 
 这个 Starter 的好坏：
 
@@ -1614,6 +1929,16 @@ docs/ARCHITECTURE_PROPOSAL.md
 - 可商用的游戏站
 
 
+同时要求：
+
+- High Cohesion
+- Low Coupling
+- Modular
+- Adaptable
+- Replaceable where useful
+- Stable Core, Flexible Edge
+
+
 坚持：
 
 80% 通用
@@ -1626,6 +1951,13 @@ docs/ARCHITECTURE_PROPOSAL.md
 不能明显减少未来重复工作：
 
 不要做。
+
+
+如果一个模块拆分：
+
+不能让职责更清晰或维护更简单：
+
+不要为了“模块化”而拆。
 
 
 如果一种技术：
@@ -1650,3 +1982,21 @@ docs/ARCHITECTURE_PROPOSAL.md
 不要为了想象中的未来：
 
 增加今天的复杂度。
+
+
+最终希望达到：
+
+Starter Core 稳定
+↓
+不同游戏主要变化：
+
+config
++
+data
++
+content
++
+少量 feature modules
+
+↓
+快速上线新游戏站
