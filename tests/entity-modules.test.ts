@@ -67,9 +67,8 @@ describe("entity module definitions", () => {
       bossDefinition,
     ]);
 
+    expect(Object.keys(index)).toEqual(["definitions", "byModule"]);
     expect(index.byModule.get("bosses")).toBe(bossDefinition);
-    expect(index.byEntityType.get("boss")).toBe(bossDefinition);
-    expect(index.byRouteSegment.get("bosses")).toBe(bossDefinition);
   });
 
   it("removes a disabled entity family without changing unrelated pages", () => {

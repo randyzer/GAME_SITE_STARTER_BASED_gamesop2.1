@@ -43,7 +43,9 @@ describe("collectSiteValidationErrors", () => {
 
     expect(errors.join("\n")).toMatch(/fixed route.*\//i);
     expect(errors.join("\n")).toMatch(/content entry.*guide\.getting-started/i);
-    expect(errors.join("\n")).toMatch(/route family.*hero/i);
+    expect(errors).toContain(
+      'No route family is implemented for enabled page type "hero" (hero.demo-sentinel). Supported page types: home, guide, hub, search, about, privacy, terms, not-found.',
+    );
     expect(errors.join("\n")).toMatch(/heroes\.json/i);
   });
 
@@ -139,5 +141,35 @@ describe("collectSiteValidationErrors", () => {
     }).join("\n");
 
     expect(errors).toMatch(/hero\.demo-sentinel.*feature.*heroes/i);
+  });
+
+  it("lists supported modules when an unsupported module reaches validation", () => {
+    const unsupportedModuleInventory = pageInventory.map((page) =>
+      page.pageId === "home"
+        ? { ...page, module: "unsupported" as never }
+        : page,
+    );
+
+    const errors = collectSiteValidationErrors({
+      config: siteConfig,
+      inventory: unsupportedModuleInventory,
+      contentEntries: [guideContent],
+      factModules: {},
+      fixedRoutes: ["/"],
+      implementedPageTypes: [
+        "home",
+        "guide",
+        "hub",
+        "search",
+        "about",
+        "privacy",
+        "terms",
+        "not-found",
+      ],
+    });
+
+    expect(errors).toContain(
+      'Page "home" uses unsupported module "unsupported". Supported modules: core, guides, heroes, weapons, items, maps, tierLists, news, search, tools.',
+    );
   });
 });

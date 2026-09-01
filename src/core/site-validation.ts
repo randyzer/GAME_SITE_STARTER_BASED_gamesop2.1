@@ -3,9 +3,10 @@ import {
   entityModuleDefinitions,
   type EntityFactModule,
 } from "../data/entity-modules";
-import type {
-  PageInventoryEntry,
-  PageType,
+import {
+  pageModuleSchema,
+  type PageInventoryEntry,
+  type PageType,
 } from "../data/schemas/page-inventory";
 import type { ContentEntryReference } from "./page-resolution";
 import { buildEnabledPageCatalog } from "./catalog";
@@ -47,32 +48,47 @@ function collectPageCapabilityErrors(page: PageInventoryEntry): string[] {
     return errors;
   }
 
-  const capability =
-    page.module === "core"
-      ? {
-          feature: undefined,
-          pageTypes: ["home", "about", "privacy", "terms", "not-found"],
-        }
-      : page.module === "guides"
-        ? { feature: "guides", pageTypes: ["guide", "hub"] }
-        : page.module === "tierLists"
-          ? { feature: "tierLists", pageTypes: ["meta"] }
-          : page.module === "news"
-            ? { feature: "news", pageTypes: ["patch"] }
-            : page.module === "search"
-              ? { feature: "search", pageTypes: ["search"] }
-              : page.module === "tools"
-                ? {
-                    feature:
-                      page.pageType === "calculator" || page.pageType === "planner"
-                        ? page.pageType
-                        : undefined,
-                    pageTypes: ["calculator", "planner"],
-                  }
-                : undefined;
+  let capability:
+    | {
+        feature: PageInventoryEntry["feature"];
+        pageTypes: PageType[];
+      }
+    | undefined;
+
+  switch (page.module) {
+    case "core":
+      capability = {
+        feature: undefined,
+        pageTypes: ["home", "about", "privacy", "terms", "not-found"],
+      };
+      break;
+    case "guides":
+      capability = { feature: "guides", pageTypes: ["guide", "hub"] };
+      break;
+    case "tierLists":
+      capability = { feature: "tierLists", pageTypes: ["meta"] };
+      break;
+    case "news":
+      capability = { feature: "news", pageTypes: ["patch"] };
+      break;
+    case "search":
+      capability = { feature: "search", pageTypes: ["search"] };
+      break;
+    case "tools":
+      capability = {
+        feature:
+          page.pageType === "calculator" || page.pageType === "planner"
+            ? page.pageType
+            : undefined,
+        pageTypes: ["calculator", "planner"],
+      };
+      break;
+  }
 
   if (!capability) {
-    errors.push(`Page "${page.pageId}" uses unsupported module "${page.module}".`);
+    errors.push(
+      `Page "${page.pageId}" uses unsupported module "${page.module}". Supported modules: ${pageModuleSchema.options.join(", ")}.`,
+    );
     return errors;
   }
   if (!capability.pageTypes.includes(page.pageType)) {
@@ -176,7 +192,7 @@ export function collectSiteValidationErrors(input: SiteValidationInput) {
   for (const page of enabledPages) {
     if (!implementedPageTypes.has(page.pageType)) {
       errors.push(
-        `No route family is implemented for enabled page type "${page.pageType}" (${page.pageId}).`,
+        `No route family is implemented for enabled page type "${page.pageType}" (${page.pageId}). Supported page types: ${input.implementedPageTypes.join(", ")}.`,
       );
     }
 

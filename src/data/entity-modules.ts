@@ -24,12 +24,6 @@ export function createEntityModuleIndex<
     byModule: new Map(
       definitions.map((definition) => [definition.module, definition]),
     ) as Map<Definition["module"], Definition>,
-    byEntityType: new Map(
-      definitions.map((definition) => [definition.entityType, definition]),
-    ) as Map<Definition["entityType"], Definition>,
-    byRouteSegment: new Map(
-      definitions.map((definition) => [definition.routeSegment, definition]),
-    ) as Map<Definition["routeSegment"], Definition>,
   };
 }
 
