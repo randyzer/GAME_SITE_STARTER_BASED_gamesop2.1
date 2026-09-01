@@ -1,0 +1,908 @@
+你现在要基于我的仓库：
+
+https://github.com/randyzer/GAME_SOP_2.1.git
+
+为我设计并最终生成一个新的、可商用、可复用的新游戏 SEO 网站模板仓库：
+
+GAME_SITE_STARTER
+
+# 一、项目目标
+
+你的任务不是为某一个具体游戏开发网站，而是：
+
+把 GAME_SOP_2.1 中已经定义好的：
+
+- 调研方法
+- 页面规范
+- 数据规范
+- SEO 规范
+- Source Policy
+- Page Inventory
+- QA 规范
+- Patch Maintenance 规范
+
+真正固化成一套稳定、轻量、可复用、可长期维护的游戏 SEO 站代码底座。
+
+以后我每做一个新游戏站，理想情况下只需要：
+
+1. 修改 game.config
+2. 填充游戏数据 data
+3. 填充页面内容 content
+4. 修改少量品牌信息
+5. 根据具体游戏打开/关闭功能模块
+
+就可以得到一个可上线的游戏 SEO 网站。
+
+这套 Starter 主要服务于：
+
+- Steam 游戏
+- Roblox 游戏
+- Mobile Game
+- RPG
+- Idle Game
+- Survival
+- Strategy
+- Gacha
+- Wiki / Guide / Database / Tool 类型游戏站
+
+但不要求覆盖所有极端特殊游戏。
+
+# 二、当前已明确的产品边界
+
+这个 Starter 当前明确：
+
+不考虑：
+
+- Login
+- User Account
+- User Builds
+- 收藏
+- 用户个人数据
+- 社区发帖系统
+- 复杂后台
+- 多租户 SaaS
+- 权限系统
+
+主要考虑：
+
+- Wiki
+- Guide
+- Database
+- Entity Detail
+- Tier List / Meta
+- Patch / News
+- Search
+- Filter
+- Calculator
+- Planner
+- Tracker
+- 轻量工具页
+
+也就是说：
+
+这是一个 SEO-first、Content-first、Data-first 的游戏站 Starter，
+
+不是 SaaS Starter。
+
+# 三、非常重要：先完整阅读 SOP
+
+开始任何架构设计之前，请完整阅读：
+
+https://github.com/randyzer/GAME_SOP_2.1.git
+
+尤其必须理解以下文档：
+
+- docs/NEW_GAME_SITE_SOP_v2.1.md
+- docs/SOURCE_POLICY.md
+- docs/RESEARCH_SOURCES_TEMPLATE.md
+- docs/KEYWORD_RESEARCH_TEMPLATE.md
+- docs/COMPETITOR_ANALYSIS_TEMPLATE.md
+- docs/SITE_STRUCTURE_TEMPLATE.md
+- docs/PAGE_INVENTORY_TEMPLATE.md
+- docs/P0_P1_P2_TEMPLATE.md
+- docs/FACT_DATABASE_SCHEMA.md
+- docs/CONTENT_PAGE_TEMPLATE.md
+- docs/TECHNICAL_SEO_SPEC.md
+- docs/QA_CHECKLIST.md
+- docs/PATCH_MAINTENANCE_SOP.md
+- docs/CURRENT_STATUS_TEMPLATE.md
+
+不要只阅读 README 后就开始设计或开发。
+
+你需要先理解：
+
+GAME_SOP_2.1
+= 决策、内容、数据、SEO、质量与维护规范
+
+GAME_SITE_STARTER
+= 把这些规范中适合固化的部分实现成代码和工程能力
+
+# 四、最重要的架构原则：不要过度工程化
+
+不要为了“通用”而做成一个复杂框架。
+
+我的目标是：
+
+80% 的 Steam / Roblox / Mobile 新游戏 SEO 站，可以直接使用这个 Starter；
+
+剩下 20% 的特殊需求，再针对具体项目单独定制。
+
+如果一个抽象层不能明显减少未来重复工作，就不要增加它。
+
+优先级应该是：
+
+简单
+>
+稳定
+>
+可理解
+>
+可维护
+>
+可复用
+>
+高度抽象
+
+不要为了理论上的扩展性：
+
+- 发明复杂 DSL
+- 做复杂插件系统
+- 做复杂 Schema Engine
+- 做动态组件注册系统
+- 做企业级 CMS
+- 做过多 Repository / Service / Adapter 层
+- 提前引入微服务
+- 提前引入复杂状态管理
+- 提前设计万能 Entity Engine
+
+除非你能明确说明：
+
+这个抽象可以显著减少以后多个游戏站的重复开发成本。
+
+# 五、技术栈：第一轮不要预设 Next.js
+
+第一轮架构设计时，请重点比较：
+
+1. Astro
+2. Next.js
+
+不要因为我过去使用过 Next.js，就默认选择 Next.js。
+
+请根据下面这些实际需求进行判断：
+
+- 不需要 Login
+- 不需要 User Builds
+- 不需要复杂后台
+- 不需要用户态
+- 不需要 SaaS 化
+- 主要是 Wiki / Guide / Database / SEO
+- 大多数页面适合静态生成
+- 页面数量未来可能达到数百或上千
+- 只有 Search / Filter / Calculator / Planner / Tracker 等局部区域需要交互
+- 希望客户端 JavaScript 尽可能少
+- 希望移动端加载快
+- 希望结构简单
+- 希望 AI 容易维护
+- 希望低成本部署
+- 希望方便部署到 Vercel / Cloudflare / Netlify 一类平台
+
+请在 ARCHITECTURE_PROPOSAL.md 中明确比较：
+
+Astro vs Next.js
+
+至少比较：
+
+- 静态生成
+- SEO
+- 页面性能
+- JavaScript 体积
+- Markdown / MDX
+- 大量内容页
+- 动态实体页
+- Search / Filter
+- Calculator / Planner
+- 数据驱动页面
+- 部署
+- 开发复杂度
+- 维护成本
+- 未来扩展能力
+- AI 修改难度
+
+最后必须明确给出：
+
+## Recommended Framework
+
+并解释：
+
+为什么选择 Astro 或 Next.js。
+
+不要模糊回答“都可以”。
+
+# 六、我目前偏好的技术方向
+
+如果你评估后没有更强理由，我目前倾向于：
+
+Astro
++
+TypeScript
++
+Tailwind CSS
++
+MDX / Markdown
++
+JSON / TS structured data
++
+React Islands（只用于真正需要交互的区域）
+
+但这不是硬性结论。
+
+你必须在 ARCHITECTURE_PROPOSAL.md 中独立评估。
+
+如果你最终推荐 Next.js，也必须说明：
+
+为什么在当前“不做 Login / User Builds / SaaS”的前提下，
+Next.js 仍然优于 Astro。
+
+# 七、如果选择 Astro
+
+如果最终推荐 Astro，请重点评估：
+
+- Astro Content Collections
+- MDX
+- TypeScript
+- Tailwind CSS
+- Static Site Generation
+- Islands Architecture
+- React Islands
+- View Transitions 是否有必要
+- Content Schema
+- Entity Data
+- getStaticPaths
+- Sitemap
+- Robots
+- Canonical
+- JSON-LD
+- RSS 是否有必要
+- 搜索方案
+
+原则：
+
+默认不向浏览器发送不必要的 JavaScript。
+
+只有真正需要交互的组件才成为 Island。
+
+例如：
+
+可以静态：
+
+- Homepage
+- Guide
+- Wiki
+- Hero
+- Item
+- World
+- Patch
+- Tier List 内容
+
+可以成为 React Island：
+
+- Search
+- Filter
+- Calculator
+- Planner
+- Interactive Database Table
+
+不要把整个页面变成 React App。
+
+# 八、如果选择 Next.js
+
+如果最终推荐 Next.js，请坚持：
+
+- App Router
+- Server Components 优先
+- 静态生成优先
+- TypeScript
+- Tailwind CSS
+- Metadata API
+- 尽量减少 Client Components
+- 只有 Search / Filter / Calculator / Planner 等区域使用 "use client"
+
+不要因为使用 Next.js 就引入：
+
+- Server Actions
+- 数据库
+- Auth
+- 复杂 API Routes
+
+除非当前 Starter 真正需要。
+
+# 九、移动端要求
+
+必须 Mobile First。
+
+但 Mobile First 不代表只做手机端。
+
+要求：
+
+- 手机可完整使用
+- 平板正常
+- 桌面端充分利用宽屏
+- 内容不能因为手机端而被大量隐藏
+- 表格在移动端必须有合理处理
+- 导航必须移动端可用
+- 卡片布局必须响应式
+- Table of Contents 在小屏幕有合理方案
+- 点击区域适合触控
+- 长表格可以横向滚动或切换卡片展示
+
+这是一个 SEO-first 的游戏站，因此移动端体验属于核心能力。
+
+# 十、Starter 必须支持的页面类型
+
+至少支持：
+
+1. Homepage
+2. Guide Page
+3. Hub Page
+4. Entity Detail Page
+5. Database / List Page
+6. Meta Page
+7. Tool Landing Page
+8. News / Patch Page
+9. About
+10. Privacy
+11. Terms
+12. 404
+
+注意：
+
+不要把页面全部写死成 Hero / Item。
+
+底层页面能力应该具备一定通用性。
+
+但也不要为了做到“万能 Entity”而设计极其复杂的动态页面引擎。
+
+优先采用：
+
+少量通用页面模式
++
+明确的业务页面
+
+# 十一、Starter 必须内置的 UI / 内容能力
+
+至少包括：
+
+- Header
+- Footer
+- Responsive Navigation
+- Breadcrumb
+- Table of Contents
+- FAQ
+- Related Content
+- Entity Card
+- Guide Card
+- Data Table
+- Search
+- Filter
+- Tags / Badges
+- Last Updated
+- Source / Confidence 展示能力
+- Internal Linking 组件
+- Empty State
+- Error State
+- 404 页面
+
+Loading State 只有真正需要异步交互时才需要。
+
+不要为了“组件完整”而做无意义的 Loading Skeleton。
+
+# 十二、视觉风格
+
+页面视觉要求：
+
+- 商用
+- 清晰
+- 克制
+- 信息密度适中偏高
+- Wiki / Guide 风格
+- 层级明确
+- 不要过度花哨
+- 不要绑定某个具体游戏美术风格
+
+应方便通过配置修改：
+
+- Logo
+- 游戏名
+- Accent Color
+- 背景
+- 字体
+- Navigation
+- 首页 Hero
+- Footer
+- Social Links
+
+不要做复杂 Design System。
+
+只需要一套稳定的：
+
+- Typography
+- spacing
+- cards
+- tables
+- badge
+- tabs
+- nav
+- layout
+- content styles
+
+# 十三、数据层要求
+
+必须参考：
+
+docs/FACT_DATABASE_SCHEMA.md
+
+Starter 至少应该能够承载：
+
+- heroes / units
+- abilities / skills
+- gear
+- items
+- worlds / maps
+- stages
+- bosses
+- skill-tree
+- patches
+- community questions
+
+如果合理，也可以支持：
+
+- market
+- achievements
+
+但是：
+
+不是每个游戏都有：
+
+- Hero
+- Market
+- Skill Tree
+- Gear
+- Boss
+
+所以数据层必须允许模块缺失。
+
+例如：
+
+某个游戏：
+
+heroes = false
+market = false
+skillTree = false
+
+网站仍然应该正常 build。
+
+不要要求用户创建一堆空 JSON 文件才能运行。
+
+# 十四、内容层要求
+
+优先评估：
+
+- Astro Content Collections（如果使用 Astro）
+- MDX
+- Markdown + Frontmatter
+
+请在 ARCHITECTURE_PROPOSAL.md 中明确说明选择。
+
+内容系统应支持：
+
+- slug
+- title
+- description
+- publishedAt
+- updatedAt
+- pageType
+- priority
+- primaryKeyword
+- tags
+- related pages
+- source confidence
+
+内容目录建议评估：
+
+content/
+├── guides/
+├── pages/
+└── news/
+
+不要设计复杂 CMS。
+
+# 十五、统一配置系统
+
+必须设计统一配置，例如：
+
+config/game.config.ts
+
+至少考虑：
+
+game:
+- name
+- shortName
+- description
+- platform
+- developer
+- publisher
+
+site:
+- domain
+- language
+- additionalLanguages
+
+brand:
+- logo
+- favicon
+- accent
+- theme
+
+officialLinks:
+- store
+- website
+- wiki
+- discord
+- youtube
+- x
+
+navigation
+
+footer
+
+social
+
+SEO defaults
+
+feature flags
+
+# 十六、Feature Flags
+
+Feature Flags 是 Starter 非常重要的能力。
+
+例如：
+
+features: {
+  heroes: true,
+  abilities: true,
+  items: true,
+  gear: false,
+  worlds: true,
+  market: false,
+  tools: true,
+  tierList: false,
+  news: true
+}
+
+要求：
+
+关闭一个模块后：
+
+- Navigation 不显示
+- 首页不显示相关入口
+- 不生成无意义页面
+- Sitemap 不包含
+- 内链不应该出现死链
+
+Feature Flag 应该简单、透明。
+
+不要设计复杂插件框架。
+
+# 十七、SEO 必须内置
+
+严格参考：
+
+docs/TECHNICAL_SEO_SPEC.md
+
+必须考虑：
+
+- unique title
+- description
+- canonical
+- Open Graph
+- Twitter metadata
+- robots
+- sitemap
+- BreadcrumbList
+- WebSite schema
+- Article schema
+- VideoGame schema（适合时）
+- hreflang 架构预留
+- index / noindex
+- stable slug
+- internal linking
+- duplicate URL 防护
+
+如果使用 Astro，请用 Astro 当前推荐方式实现。
+
+如果使用 Next.js，请用 Next.js 当前官方推荐方式实现。
+
+不能为了 Schema 数量而堆 Schema。
+
+Structured Data 必须和页面真实内容匹配。
+
+# 十八、Page Inventory 和代码如何结合
+
+GAME_SOP_2.1 中有：
+
+PAGE_INVENTORY_TEMPLATE.md
+
+你需要设计一种简单方式，让 Starter 和 Page Inventory 产生联系。
+
+目标不是：
+
+把 Markdown 表格强行做成运行时数据库。
+
+而是考虑：
+
+- 内容 frontmatter
+- data 文件
+- route generation
+- config
+
+如何让 AI 和开发者容易知道：
+
+哪些页面：
+
+- planned
+- live
+- indexable
+- P0
+- P1
+- P2
+- needs update
+
+请提出一个简单可维护的方案。
+
+# 十九、Patch Maintenance
+
+Starter 需要方便未来游戏 Patch 后维护。
+
+重点考虑：
+
+- Last Updated
+- Patch 页面
+- Fact 数据集中维护
+- 页面数据复用
+- 避免同一个数值复制到 10 篇文章
+- affected entities
+- affected pages
+
+不要开发自动爬 Patch 系统。
+
+这里只需要：
+
+让代码架构有利于后续 Patch 更新。
+
+# 二十、程序化 SEO
+
+Starter 应支持：
+
+Fact Database
+↓
+Entity Collection
+↓
+Static / Generated Route
+↓
+Entity Detail Page
+
+例如：
+
+data/heroes
+↓
+/heroes
+↓
+/heroes/[slug]
+
+但是：
+
+不要一开始就批量生成大量薄页面。
+
+只有具备足够数据和内容的 Entity 才应该成为 indexable 页面。
+
+请设计：
+
+- empty entity
+- thin content
+- noindex
+- not generated
+
+之间合理的处理策略。
+
+# 二十一、搜索和 Filter
+
+V1 搜索优先使用轻量方案。
+
+不要为了几十到几百条游戏数据直接引入：
+
+- Elasticsearch
+- Algolia
+- 数据库全文检索
+
+可以考虑：
+
+- client-side filter
+- static search index
+- Pagefind
+- 其他轻量静态搜索方案
+
+如果你推荐某一个，请解释：
+
+- bundle
+- build complexity
+- SEO
+- 使用体验
+- 未来升级路径
+
+# 二十二、工程质量要求
+
+开发完成后必须保证：
+
+- pnpm install 成功
+- pnpm lint 通过
+- pnpm typecheck 通过
+- pnpm build 通过
+
+还要避免：
+
+- hydration error
+- console error
+- broken links
+- TypeScript any 滥用
+- 大量 duplicated code
+- 无意义 dependency
+- 巨大的 client bundle
+- 大量不必要 JavaScript
+
+如果使用 Astro：
+
+优先零 JS / 少 JS。
+
+如果使用 Next.js：
+
+优先 Server Components。
+
+# 二十三、Demo Data 原则
+
+Starter 可以存在 Demo Data。
+
+但必须：
+
+- 明确标记 SAMPLE / DEMO
+- 不能冒充真实游戏数据
+- 容易删除
+- 不应该和 Starter 核心代码强耦合
+
+可以考虑一个：
+
+Sample Game
+
+用于展示 Starter 能力。
+
+但要保证换成新游戏非常容易。
+
+# 二十四、未来数据库升级
+
+当前不要接数据库。
+
+但请说明未来如果需要：
+
+- Market Tracker
+- 大量动态价格
+- 实时数据
+- API 数据同步
+
+如何迁移到：
+
+- Supabase
+- PostgreSQL
+- 其他数据库
+
+注意：
+
+当前不考虑：
+
+- Login
+- User Account
+- User Builds
+
+所以不要为了这些未来需求预埋复杂架构。
+
+重点是：
+
+不要让当前 JSON/MDX/Content Collection 实现把未来数据库升级完全堵死。
+
+但也不要因为未来可能用数据库，现在就写 Repository / ORM 抽象。
+
+# 二十五、Starter 的最终使用体验
+
+我希望未来创建一个新游戏站时，可以做到：
+
+Clone GAME_SITE_STARTER
+↓
+修改 game.config
+↓
+删除 Sample Data
+↓
+导入新游戏 Fact Data
+↓
+生成 Guides / Entity Data
+↓
+打开需要的 Feature Flags
+↓
+修改 Logo / Theme
+↓
+pnpm build
+↓
+Deploy
+
+而不是：
+
+每做一个游戏都重新改架构。
+
+# 二十六、第一阶段禁止直接开发
+
+非常重要：
+
+第一轮不要直接开始写 Starter 代码。
+
+第一轮只能做：
+
+1. 阅读 GAME_SOP_2.1
+2. 分析需求
+3. 比较 Astro 与 Next.js
+4. 设计架构
+5. 输出一份：
+
+docs/ARCHITECTURE_PROPOSAL.md
+
+第一阶段禁止：
+
+- 创建 Starter 业务组件
+- 创建实际业务路由
+- 创建完整页面实现
+- 大规模修改 package.json
+- 安装新依赖
+- 创建数据处理核心代码
+- 实现 Feature Flag 系统
+- 实现 SEO 组件
+- 实现 UI
+- 实现实际 Sample Site
+- 提前开始编码
+
+如果为了生成 ARCHITECTURE_PROPOSAL.md，需要创建 docs 目录或该 Markdown 文件，这是允许的。
+
+除此之外，不要继续实现 Starter。
+
+# 二十七、ARCHITECTURE_PROPOSAL.md 必须包含
+
+## 1. 你对 GAME_SOP_2.1 的理解
+
+说明：
+
+哪些规则应该固化进代码；
+哪些应该由 AI / 人执行。
+
+## 2. GAME_SITE_STARTER 的定位
+
+明确：
+
+它是什么；
+它不是什么。
+
+## 3. Astro vs Next.js
+
+做一张明确对比表。
+
+至少比较：
+
+- SEO
+- SSG
+- MDX
+- Content Collections
+- Client JS
