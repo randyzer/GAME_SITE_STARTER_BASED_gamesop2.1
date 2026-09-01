@@ -906,3 +906,366 @@ docs/ARCHITECTURE_PROPOSAL.md
 - MDX
 - Content Collections
 - Client JS
+- Performance
+- Search / Filter
+- Calculator / Planner
+- 大量 Entity Pages
+- 部署
+- 开发复杂度
+- 维护
+- 未来动态数据能力
+
+## 4. Recommended Framework
+
+必须明确选一个。
+
+不能只写：
+
+“两者都可以。”
+
+请解释最终推荐原因。
+
+## 5. 技术栈
+
+包括：
+
+- Framework
+- TypeScript
+- Tailwind
+- MDX / Markdown
+- Content collection / data
+- React 是否需要
+- package manager
+- search library（如需要）
+
+## 6. 完整目录结构
+
+例如：
+
+src/
+├── pages/
+├── layouts/
+├── components/
+├── content/
+├── data/
+├── config/
+├── lib/
+└── types/
+
+或者 Next.js 对应结构。
+
+请根据最终框架给出真实合理结构。
+
+## 7. 页面模型
+
+说明：
+
+- Homepage
+- Hub
+- Guide
+- Entity
+- Database
+- Meta
+- Tool
+- News
+
+分别如何实现。
+
+## 8. Data Layer
+
+说明：
+
+- Data 如何定义
+- Type 如何定义
+- 不同游戏拥有不同 Entity 怎么处理
+- 如何避免空文件
+- 如何未来接动态数据
+
+## 9. Content Layer
+
+说明：
+
+- Content Collections / MDX / Markdown
+- frontmatter schema
+- Related Content
+- Draft / Published
+- Last Updated
+
+## 10. Game Config
+
+给出建议结构。
+
+## 11. Feature Flags
+
+说明关闭模块后的：
+
+- 路由
+- Nav
+- Homepage
+- Sitemap
+- Internal Links
+
+## 12. SEO Architecture
+
+说明：
+
+- Metadata
+- Canonical
+- Schema
+- Sitemap
+- Robots
+- Hreflang
+- Indexability
+
+## 13. Internal Linking Architecture
+
+说明：
+
+Hub
+↓
+Child
+↓
+Related Entity
+↓
+Related Guide
+
+如何实现。
+
+## 14. Page Inventory Integration
+
+说明：
+
+SOP 中的 Page Inventory 如何和实际代码 / 内容 / 数据配合。
+
+## 15. Patch Maintenance
+
+说明：
+
+游戏更新后如何减少重复修改。
+
+## 16. Mobile First
+
+说明：
+
+- Nav
+- Tables
+- Cards
+- TOC
+- Database
+- Detail Page
+
+如何设计。
+
+## 17. Performance Strategy
+
+如果 Astro：
+
+说明：
+
+- Islands
+- client:* directives
+- static generation
+- JS budget
+
+如果 Next.js：
+
+说明：
+
+- Server Components
+- Client Components
+- static generation
+- bundle
+
+## 18. Search / Filter Architecture
+
+说明：
+
+V1 用什么方案。
+
+为什么。
+
+## 19. Error / Empty / Missing Data
+
+说明：
+
+某个游戏没有：
+
+- Hero
+- Gear
+- Market
+- Tool
+- News
+
+怎么办。
+
+## 20. Sample Game Strategy
+
+说明：
+
+Demo Data 如何：
+
+- 标记
+- 删除
+- 替换
+
+## 21. Future Dynamic Data Migration
+
+不考虑用户系统。
+
+只说明未来如果需要：
+
+- 实时 Market
+- 外部 API
+- 大量动态数据
+
+如何升级。
+
+## 22. 应该抽象的部分
+
+明确列出。
+
+## 23. 不应该抽象的部分
+
+明确列出。
+
+## 24. SOP Rules Mapping
+
+输出：
+
+| SOP Rule | Code / Human / AI | Implementation | Reason |
+|---|---|---|---|
+
+## 25. Risks
+
+重点分析：
+
+- 过度抽象
+- Astro / React 边界不合理
+- Client JS 过多
+- Entity 写死
+- Feature Flags 与路由失配
+- Thin Pages
+- Demo Data 污染
+- SEO 自动化错误
+
+## 26. Implementation Plan
+
+只输出阶段计划。
+
+例如：
+
+Phase 1 Foundation
+Phase 2 Content & Data
+Phase 3 Page Models
+Phase 4 SEO
+Phase 5 Islands / Interactivity
+Phase 6 Responsive UI
+Phase 7 QA
+Phase 8 Sample Game
+
+第一轮禁止执行。
+
+# 二十八、SOP Issues / Questions
+
+如果 GAME_SOP_2.1 中存在：
+
+- 矛盾
+- 不合理要求
+- 不适合固化进代码的规则
+- Astro / Next.js 下存在不同合理实现
+- 你认为某个要求会让架构变重
+
+请在：
+
+## SOP Issues / Questions
+
+中明确写出来。
+
+不要擅自修改 SOP 核心规则。
+
+# 二十九、第一阶段验收条件
+
+第一轮唯一需要提交的核心成果是：
+
+docs/ARCHITECTURE_PROPOSAL.md
+
+完成后：
+
+立即停止。
+
+不要继续实现 Starter。
+
+不要继续写组件。
+
+不要继续写页面。
+
+不要继续安装依赖。
+
+不要继续创建路由。
+
+不要继续创建 Data Layer。
+
+不要继续创建 Config System。
+
+不要继续创建 Feature Flags。
+
+不要继续创建 SEO 实现。
+
+不要继续做 UI。
+
+等待我审核。
+
+# 三十、硬性停止条件
+
+在我明确回复：
+
+“架构方案确认，可以开始编码”
+
+之前：
+
+不允许开始实现 GAME_SITE_STARTER。
+
+除：
+
+docs/ARCHITECTURE_PROPOSAL.md
+
+以及保存该文件所必需的最小目录外，
+
+第一轮不要创建或修改任何 Starter 业务代码、组件、路由、依赖、配置、数据文件或 UI 文件。
+
+无论你认为方案多么明确，都必须停止等待确认。
+
+# 三十一、最终判断标准
+
+这个 Starter 的判断标准不是：
+
+“架构看起来有多高级。”
+
+而是：
+
+“以后面对一个刚发布的新游戏，能不能在很短时间内基于 GAME_SOP_2.1 做出一个稳定、SEO 友好、移动端好用、低 JavaScript、可长期维护的商业游戏站。”
+
+核心目标：
+
+80% 通用
++
+20% 项目定制
+
+如果一个抽象不能明显减少未来重复工作，就不要做。
+
+如果一种技术不能明显提升：
+
+- 建站速度
+- SEO
+- 性能
+- 稳定性
+- 维护效率
+- 可复用性
+
+就不要为了技术先进而引入。
+
+第一轮任务结束条件只有一个：
+
+docs/ARCHITECTURE_PROPOSAL.md 已完成。
+
+然后停止，等待我确认。
