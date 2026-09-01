@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildBrandPresentation } from "../core/brand";
+import {
+  enabledPageCatalog,
+  featuredHomepagePages,
+  getPageByRoute,
+  homepageBrowsePages,
+  siteConfig,
+} from "../core/site-data";
+
+const page = getPageByRoute("/");
+const brandPresentation = buildBrandPresentation(siteConfig);
+const primaryFeature = featuredHomepagePages[0];
+const enabledFeatures = Object.values(siteConfig.features).filter(Boolean).length;
+---
+
+<BaseLayout page={page}>
+  <main
+    id="main-content"
+    data-pagefind-body={page.indexability === "index" ? true : undefined}
+  >
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero__copy reveal reveal--1">
+        <p class="eyebrow">Game intelligence / independently structured</p>
+        <h1 id="hero-title" data-pagefind-meta="title">
+          The shortest path from a question to <em>confident play.</em>
+        </h1>
+        <p class="hero__lede" data-pagefind-meta="description">{page.description}</p>
+        <div class="hero__actions">
+          {primaryFeature && (
+            <a class="button button--primary" href={primaryFeature.route}>
+              Open the field guide <span aria-hidden="true">↗</span>
+            </a>
+          )}
+          <a class="button button--quiet" href="#method">Read our method</a>
+        </div>
+      </div>
+
+      <aside class="hero__instrument reveal reveal--2" aria-label="Site status">
+        <div class="instrument__radar" aria-hidden="true">
+          <span class="instrument__axis instrument__axis--x"></span>
+          <span class="instrument__axis instrument__axis--y"></span>
+          <span class="instrument__sweep"></span>
+          <b>{brandPresentation.mark}</b>
+        </div>
+        <dl class="instrument__readout">
+          <div>
+            <dt>Published nodes</dt>
+            <dd>{enabledPageCatalog.length.toString().padStart(2, "0")}</dd>
+          </div>
+          <div>
+            <dt>Active systems</dt>
+            <dd>{enabledFeatures.toString().padStart(2, "0")}</dd>
+          </div>
+          <div>
+            <dt>Source policy</dt>
+            <dd>ON</dd>
+          </div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="signal-strip" aria-label="Publishing principles">
+      <div class="shell signal-strip__track">
+        <span>Evidence attached</span>
+        <span>Static delivery</span>
+        <span>Routes declared first</span>
+        <span>Noise removed</span>
+      </div>
+    </section>
+
+    <section id="browse" class="browse shell section-rule" aria-labelledby="browse-title">
+      <div class="section-heading">
+        <div>
+          <span class="section-index">01</span>
+          <p class="eyebrow">Browse the live index</p>
+        </div>
+        <h2 id="browse-title">Every published route, intentionally placed.</h2>
+      </div>
+
+      <div class="dispatch-list">
+        {homepageBrowsePages.map((entry, index) => (
+          <a class="dispatch" href={entry.route}>
+            <span class="dispatch__number">
+              {(index + 1).toString().padStart(2, "0")}
+            </span>
+            <span class="dispatch__body">
+              <small>{entry.pageType} / updated {entry.updatedAt}</small>
+              <strong>{entry.title}</strong>
+              <span>{entry.description}</span>
+            </span>
+            <span class="dispatch__arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section id="method" class="method shell section-rule" aria-labelledby="method-title">
+      <div class="section-heading section-heading--compact">
+        <div>
+          <span class="section-index">02</span>
+          <p class="eyebrow">Operating doctrine</p>
+        </div>
+        <h2 id="method-title">Useful beats exhaustive.</h2>
+      </div>
+
+      <div class="method__grid">
+        <article>
+          <span>01 / Declare</span>
+          <h3>Pages exist on purpose.</h3>
+          <p>
+            One inventory decides what can ship, rank, link, and appear in search.
+          </p>
+        </article>
+        <article>
+          <span>02 / Verify</span>
+          <h3>Facts carry receipts.</h3>
+          <p>
+            Source, access date, evidence note, and confidence travel with the data.
+          </p>
+        </article>
+        <article>
+          <span>03 / Deliver</span>
+          <h3>Speed is a feature.</h3>
+          <p>
+            Static HTML does the heavy lifting; client code earns its place.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing shell" aria-label="Starter call to action">
+      <p class="eyebrow">Ready for a real game</p>
+      <p class="closing__line">
+        Replace the coordinates.<br />Keep the discipline.
+      </p>
+      {primaryFeature && (
+        <a class="text-link" href={primaryFeature.route}>
+          Configure the starter <span aria-hidden="true">→</span>
+        </a>
+      )}
+    </section>
+  </main>
+</BaseLayout>

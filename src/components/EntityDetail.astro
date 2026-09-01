@@ -1,0 +1,116 @@
+---
+import { enabledPageCatalog, getRelatedPages, siteConfig } from "../core/site-data";
+import {
+  buildBreadcrumbSchema,
+  buildBreadcrumbTrail,
+  buildCanonicalUrl,
+} from "../core/seo";
+import type { Provenance } from "../data/schemas/provenance";
+import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  page: PageInventoryEntry;
+  fact: {
+    id: string;
+    name: string;
+    summary: string;
+    patch: string;
+    updatedAt: string;
+    confidence: "high" | "medium" | "low";
+    sources: Provenance[];
+  };
+  fields: Array<{ label: string; value: string }>;
+  entityLabel: string;
+}
+
+const { page, fact, fields, entityLabel } = Astro.props;
+const relatedPages = getRelatedPages(page);
+const canonical = buildCanonicalUrl(siteConfig, page.route);
+const breadcrumbTrail = buildBreadcrumbTrail(
+  siteConfig,
+  page,
+  enabledPageCatalog,
+);
+---
+
+<BaseLayout
+  page={page}
+  structuredData={buildBreadcrumbSchema(canonical, breadcrumbTrail)}
+>
+  <main
+    id="main-content"
+    class="entity-page shell"
+    data-pagefind-body={page.indexability === "index" ? true : undefined}
+  >
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        {breadcrumbTrail.map((item, index) => (
+          <li aria-current={index === breadcrumbTrail.length - 1 ? "page" : undefined}>
+            {index === breadcrumbTrail.length - 1 ? item.name : <a href={item.url}>{item.name}</a>}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <header class="entity-page__header reveal reveal--1">
+      <div>
+        <p class="eyebrow">{entityLabel} record / patch {fact.patch}</p>
+        <h1 data-pagefind-meta="title">{fact.name}</h1>
+        <p data-pagefind-meta="description">{fact.summary}</p>
+      </div>
+      <div class="entity-page__seal" aria-label={`Confidence ${fact.confidence}`}>
+        <span>Confidence</span>
+        <strong>{fact.confidence}</strong>
+        <small>Verified {fact.updatedAt}</small>
+      </div>
+    </header>
+
+    <section class="entity-facts" aria-labelledby="entity-facts-title">
+      <div>
+        <p class="eyebrow">Current fact set</p>
+        <h2 id="entity-facts-title">At a glance</h2>
+      </div>
+      <dl>
+        {fields.map((field, index) => (
+          <div>
+            <dt><span>{(index + 1).toString().padStart(2, "0")}</span>{field.label}</dt>
+            <dd>{field.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="entity-sources section-rule" aria-labelledby="entity-sources-title">
+      <div>
+        <p class="eyebrow">Provenance ledger</p>
+        <h2 id="entity-sources-title">Evidence attached</h2>
+      </div>
+      <ol>
+        {fact.sources.map((source, index) => (
+          <li>
+            <span>{(index + 1).toString().padStart(2, "0")}</span>
+            <div>
+              <strong>{source.sourceType.replaceAll("-", " ")}</strong>
+              <p>{source.evidenceNote}</p>
+              <a href={source.sourceUrl} rel="noreferrer">Inspect source ↗</a>
+            </div>
+            <time datetime={source.accessedAt}>Accessed {source.accessedAt}</time>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {relatedPages.length > 0 && (
+      <nav class="next-dispatch" aria-label="Related pages">
+        <span class="eyebrow">Related dispatches</span>
+        {relatedPages.map((relatedPage) => (
+          <a href={relatedPage.route}>
+            <strong>{relatedPage.title}</strong>
+            <span aria-hidden="true">→</span>
+          </a>
+        ))}
+      </nav>
+    )}
+  </main>
+</BaseLayout>

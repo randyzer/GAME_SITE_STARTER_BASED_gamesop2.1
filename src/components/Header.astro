@@ -1,0 +1,47 @@
+---
+import { primaryNavigationPages, siteConfig } from "../core/site-data";
+import { buildBrandPresentation } from "../core/brand";
+
+interface Props {
+  currentRoute: string;
+}
+
+const { currentRoute } = Astro.props;
+const brandPresentation = buildBrandPresentation(siteConfig);
+
+function navigationLabel(pageId: string) {
+  const labels: Record<string, string> = {
+    home: "Dispatch",
+    "hub.guides": "Guides",
+    search: "Search",
+  };
+
+  return labels[pageId] ?? pageId.replaceAll(/[.-]/g, " ");
+}
+---
+
+<header class="site-header">
+  <div class="site-header__inner shell">
+    <a class="brand" href="/" aria-label={`${siteConfig.brand.name} home`}>
+      <span class="brand__mark" aria-hidden="true">{brandPresentation.mark}</span>
+      <span class="brand__copy">
+        <strong>{siteConfig.brand.shortName}</strong>
+        <small>{brandPresentation.descriptor}</small>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary navigation">
+      {primaryNavigationPages.map((page) => (
+        <a
+          href={page.route}
+          aria-current={currentRoute === page.route ? "page" : undefined}
+        >
+          {navigationLabel(page.pageId)}
+        </a>
+      ))}
+      <a class="site-nav__signal" href="/#browse">
+        Browse <span aria-hidden="true">↘</span>
+      </a>
+    </nav>
+  </div>
+</header>

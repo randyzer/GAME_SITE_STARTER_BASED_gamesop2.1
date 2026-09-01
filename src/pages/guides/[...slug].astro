@@ -1,0 +1,188 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  enabledPageCatalog,
+  getRelatedPages,
+  pageInventory,
+  siteConfig,
+} from "../../core/site-data";
+import {
+  buildGuideRouteRecords,
+  type GuideRouteRecord,
+} from "../../core/optional-routes";
+import { resolveContentPages } from "../../core/page-resolution";
+import {
+  buildArticleSchema,
+  buildBreadcrumbSchema,
+  buildBreadcrumbTrail,
+  buildCanonicalUrl,
+} from "../../core/seo";
+
+interface Props {
+  record: GuideRouteRecord<CollectionEntry<"guides">>;
+}
+
+export async function getStaticPaths() {
+  const entries = await getCollection("guides");
+  const resolved = resolveContentPages(pageInventory, entries);
+
+  return buildGuideRouteRecords(enabledPageCatalog, resolved).map((record) => ({
+    params: { slug: record.path },
+    props: { record },
+  }));
+}
+
+const { record } = Astro.props;
+const page = record.page;
+const rendered = record.view === "article" ? await render(record.content) : undefined;
+const Content = rendered?.Content;
+const relatedPages = record.view === "article" ? getRelatedPages(page) : [];
+const canonical = buildCanonicalUrl(siteConfig, page.route);
+const breadcrumbTrail =
+  record.view === "article"
+    ? buildBreadcrumbTrail(siteConfig, page, enabledPageCatalog)
+    : [];
+const structuredData =
+  record.view === "article"
+    ? [
+        buildBreadcrumbSchema(canonical, breadcrumbTrail),
+        buildArticleSchema(siteConfig, page),
+      ]
+    : undefined;
+---
+
+<BaseLayout page={page} structuredData={structuredData}>
+  {record.view === "hub" ? (
+    <main id="main-content" class="hub-page shell" data-pagefind-body>
+      <header class="hub-page__header reveal reveal--1">
+        <div>
+          <p class="eyebrow">
+            Editorial index / {record.guidePages.length.toString().padStart(2, "0")} live
+          </p>
+          <h1 data-pagefind-meta="title">{page.title}</h1>
+        </div>
+        <p data-pagefind-meta="description">{page.description}</p>
+      </header>
+
+      <div class="hub-page__legend" aria-label="Guide index legend">
+        <span>Priority</span>
+        <span>Dispatch</span>
+        <span>Signal</span>
+        <span>Updated</span>
+      </div>
+
+      <ol class="guide-index">
+        {record.guidePages.map((guide, index) => (
+          <li>
+            <a href={guide.route}>
+              <span class="guide-index__priority">P{guide.priority}</span>
+              <span class="guide-index__title">
+                <small>{(index + 1).toString().padStart(2, "0")} / {guide.cluster}</small>
+                <strong>{guide.title}</strong>
+                <span>{guide.description}</span>
+              </span>
+              <span class="guide-index__keyword">{guide.primaryKeyword}</span>
+              <time datetime={guide.updatedAt}>{guide.updatedAt}</time>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </main>
+  ) : (
+    <main id="main-content">
+      <article
+        class="article shell"
+        data-pagefind-body={page.indexability === "index" ? true : undefined}
+      >
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            {breadcrumbTrail.map((item, index) => (
+              <li aria-current={index === breadcrumbTrail.length - 1 ? "page" : undefined}>
+                {index === breadcrumbTrail.length - 1 ? item.name : <a href={item.url}>{item.name}</a>}
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <header class="article__header reveal reveal--1">
+          <div class="article__classification">
+            <span class="eyebrow">Field guide</span>
+            <span>Priority {page.priority}</span>
+            <span>Confidence {page.confidence}</span>
+          </div>
+          <h1 data-pagefind-meta="title">{page.title}</h1>
+          <p class="article__dek" data-pagefind-meta="description">{page.description}</p>
+          <dl class="article__meta">
+            <div>
+              <dt>Published</dt>
+              <dd><time datetime={page.publishedAt}>{page.publishedAt}</time></dd>
+            </div>
+            <div>
+              <dt>Updated</dt>
+              <dd><time datetime={page.updatedAt}>{page.updatedAt}</time></dd>
+            </div>
+            <div>
+              <dt>Signal</dt>
+              <dd>{page.primaryKeyword}</dd>
+            </div>
+          </dl>
+        </header>
+
+        <div class="article__layout">
+          <aside class="article__rail" aria-label="Guide details">
+            <div class="rail-block">
+              <span class="eyebrow">Filed under</span>
+              <ul class="tag-list">
+                {page.tags.map((tag) => <li>{tag}</li>)}
+              </ul>
+            </div>
+            <div class="rail-block rail-block--signal">
+              <span class="signal-dot" aria-hidden="true"></span>
+              <p>Inventory and content reference verified at build time.</p>
+            </div>
+          </aside>
+
+          <div class="prose">
+            {Content && <Content />}
+          </div>
+        </div>
+
+        <section class="evidence section-rule" aria-labelledby="evidence-title">
+          <div>
+            <p class="eyebrow">Evidence ledger</p>
+            <h2 id="evidence-title">What this page is based on</h2>
+          </div>
+          <ol>
+            {page.sources.map((source, index) => (
+              <li>
+                <span>{(index + 1).toString().padStart(2, "0")}</span>
+                <div>
+                  <strong>{source.sourceType.replaceAll("-", " ")}</strong>
+                  <p>{source.evidenceNote}</p>
+                  <a href={source.sourceUrl} rel="noreferrer">
+                    Inspect source <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+                <time datetime={source.accessedAt}>Accessed {source.accessedAt}</time>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {relatedPages.length > 0 && (
+          <nav class="next-dispatch" aria-label="Related pages">
+            <span class="eyebrow">Next dispatch</span>
+            {relatedPages.map((relatedPage) => (
+              <a href={relatedPage.route}>
+                <strong>{relatedPage.title}</strong>
+                <span aria-hidden="true">→</span>
+              </a>
+            ))}
+          </nav>
+        )}
+      </article>
+    </main>
+  )}
+</BaseLayout>

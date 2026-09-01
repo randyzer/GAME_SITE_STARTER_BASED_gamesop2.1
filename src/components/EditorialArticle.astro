@@ -1,0 +1,125 @@
+---
+import { getRelatedPages, siteConfig } from "../core/site-data";
+import { enabledPageCatalog } from "../core/site-data";
+import {
+  buildArticleSchema,
+  buildBreadcrumbSchema,
+  buildBreadcrumbTrail,
+  buildCanonicalUrl,
+} from "../core/seo";
+import type { PageInventoryEntry } from "../data/schemas/page-inventory";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  page: PageInventoryEntry;
+  sectionLabel: string;
+  sectionDescription: string;
+}
+
+const { page, sectionLabel, sectionDescription } = Astro.props;
+const relatedPages = getRelatedPages(page);
+const canonical = buildCanonicalUrl(siteConfig, page.route);
+const breadcrumbTrail = buildBreadcrumbTrail(
+  siteConfig,
+  page,
+  enabledPageCatalog,
+);
+const structuredData = [
+  buildBreadcrumbSchema(canonical, breadcrumbTrail),
+  buildArticleSchema(siteConfig, page),
+];
+---
+
+<BaseLayout page={page} structuredData={structuredData}>
+  <main id="main-content">
+    <article
+      class="article editorial shell"
+      data-pagefind-body={page.indexability === "index" ? true : undefined}
+    >
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          {breadcrumbTrail.map((item, index) => (
+            <li aria-current={index === breadcrumbTrail.length - 1 ? "page" : undefined}>
+              {index === breadcrumbTrail.length - 1 ? item.name : <a href={item.url}>{item.name}</a>}
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <header class="article__header editorial__header reveal reveal--1">
+        <div class="article__classification">
+          <span class="eyebrow">{sectionLabel}</span>
+          <span>Priority {page.priority}</span>
+          <span>Confidence {page.confidence}</span>
+        </div>
+        <h1 data-pagefind-meta="title">{page.title}</h1>
+        <p class="article__dek" data-pagefind-meta="description">{page.description}</p>
+        <dl class="article__meta">
+          <div>
+            <dt>Published</dt>
+            <dd><time datetime={page.publishedAt}>{page.publishedAt}</time></dd>
+          </div>
+          <div>
+            <dt>Updated</dt>
+            <dd><time datetime={page.updatedAt}>{page.updatedAt}</time></dd>
+          </div>
+          <div>
+            <dt>Signal</dt>
+            <dd>{page.primaryKeyword}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div class="article__layout">
+        <aside class="article__rail" aria-label={`${sectionLabel} details`}>
+          <div class="rail-block editorial__brief">
+            <span class="eyebrow">Editorial brief</span>
+            <p>{sectionDescription}</p>
+          </div>
+          <div class="rail-block">
+            <span class="eyebrow">Filed under</span>
+            <ul class="tag-list">
+              {page.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          </div>
+        </aside>
+
+        <div class="prose"><slot /></div>
+      </div>
+
+      <section class="evidence section-rule" aria-labelledby="evidence-title">
+        <div>
+          <p class="eyebrow">Evidence ledger</p>
+          <h2 id="evidence-title">Sources behind this dispatch</h2>
+        </div>
+        <ol>
+          {page.sources.map((source, index) => (
+            <li>
+              <span>{(index + 1).toString().padStart(2, "0")}</span>
+              <div>
+                <strong>{source.sourceType.replaceAll("-", " ")}</strong>
+                <p>{source.evidenceNote}</p>
+                <a href={source.sourceUrl} rel="noreferrer">
+                  Inspect source <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+              <time datetime={source.accessedAt}>Accessed {source.accessedAt}</time>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {relatedPages.length > 0 && (
+        <nav class="next-dispatch" aria-label="Related pages">
+          <span class="eyebrow">Related dispatches</span>
+          {relatedPages.map((relatedPage) => (
+            <a href={relatedPage.route}>
+              <strong>{relatedPage.title}</strong>
+              <span aria-hidden="true">→</span>
+            </a>
+          ))}
+        </nav>
+      )}
+    </article>
+  </main>
+</BaseLayout>
