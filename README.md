@@ -65,6 +65,17 @@ During implementation, configure `game.config.ts`, add cited content and data
 through the existing schemas, enable only reviewed modules, and finish the
 complete check/build/preview workflow in `docs/QA_CHECKLIST.md`.
 
+## Customize Game Visual Identity
+
+1. Follow `GAME_SOP_2.1` to complete Game Visual Identity Research.
+2. Open `src/styles/theme.css`.
+3. Replace the Starter fallback theme with the researched palette.
+4. Keep game-specific colors out of components; consume the shared Theme
+   Tokens instead.
+5. Run the complete QA workflow after changing the palette.
+
+Theme mechanism = Stable Core. Game-specific palette = Flexible Edge.
+
 ## Feature flags
 
 Flags live in `game.config.ts`. Disabling a module removes its routes from the

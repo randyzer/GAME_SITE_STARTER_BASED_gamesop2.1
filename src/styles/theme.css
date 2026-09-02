@@ -1,0 +1,19 @@
+/*
+ * Starter fallback theme.
+ * Replace these values only after completing Game Visual Identity Research for
+ * the real game. The Theme mechanism is Stable Core; each game-specific
+ * palette belongs to the Flexible Edge.
+ */
+:root {
+  --color-background: #eee9dc;
+  --color-surface: #ddd6c5;
+  --color-text: #171814;
+  --color-text-muted: #646459;
+  --color-primary: #1f4a3b;
+  --color-accent: #ee4b20;
+  --color-accent-strong: #a92709;
+  --color-border: color-mix(in srgb, var(--color-text) 24%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--color-text) 72%, transparent);
+  --color-on-primary: #e5eadf;
+  --color-on-accent: #fffaf0;
+}
