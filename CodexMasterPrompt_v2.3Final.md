@@ -1,3 +1,10 @@
+# Codex Master Prompt — Post-Smoke-Test Updated Final
+
+> 本版本在原 Master Prompt 基础上，同步 Afterworld Real-Game Smoke Test 已验证并回灌到 `GAME_SOP_2.1` / `GAME_SITE_STARTER` 的通用规则。
+>
+> 本次同步只更新真实项目执行流程、Page Inventory 语义、Fact 使用边界与 Deployment Gate。
+> 不重新设计已经通过 Smoke Test 验证的 Stable Core 架构。
+
 你现在要基于以下 SOP 仓库，为我设计并最终实现一个新的、可商用、可复用的新游戏 SEO 网站模板：
 
 SOP 规范仓库：
@@ -18,9 +25,23 @@ GAME_SITE_STARTER
 
 Clone GAME_SITE_STARTER
 ↓
+读取并遵循 GAME_SOP_2.1
+↓
+生成并维护 6 个 Project Artifacts
+↓
+完成 Official Source Verification
+↓
+完成 Discovery Research
+↓
+确定 SITE_STRUCTURE
+↓
+确定 structured runtime Page Inventory SSOT
+↓
+人工审核 materially changed page scope
+↓
 修改 game.config
 ↓
-导入真实游戏 data
+导入真实游戏 data / fact
 ↓
 导入 content
 ↓
@@ -28,9 +49,17 @@ Clone GAME_SITE_STARTER
 ↓
 修改品牌
 ↓
-build
+check / test / build
+↓
+QA
+↓
+部署授权
 ↓
 deploy
+↓
+inspect 实际 provider target/state
+↓
+再判断 Preview / Production / Launch 状态
 
 核心目标：
 
@@ -218,7 +247,12 @@ MUST READ：
 
 - README.md
 - docs/NEW_GAME_SITE_SOP_v2.1.md
+- docs/EXECUTION_PROMPT.md
 - docs/SOURCE_POLICY.md
+- docs/RESEARCH_SOURCES_TEMPLATE.md
+- docs/KEYWORD_RESEARCH_TEMPLATE.md
+- docs/COMPETITOR_ANALYSIS_TEMPLATE.md
+- docs/SITE_STRUCTURE_TEMPLATE.md
 - docs/PAGE_INVENTORY_TEMPLATE.md
 - docs/P0_P1_P2_TEMPLATE.md
 - docs/FACT_DATABASE_SCHEMA.md
@@ -226,17 +260,20 @@ MUST READ：
 - docs/TECHNICAL_SEO_SPEC.md
 - docs/QA_CHECKLIST.md
 - docs/PATCH_MAINTENANCE_SOP.md
+- docs/CURRENT_STATUS_TEMPLATE.md
 
 
 ## 2.2 SHOULD READ
 
-以下文件应尽量读取：
+如果仓库未来新增：
 
-- docs/RESEARCH_SOURCES_TEMPLATE.md
-- docs/KEYWORD_RESEARCH_TEMPLATE.md
-- docs/COMPETITOR_ANALYSIS_TEMPLATE.md
-- docs/SITE_STRUCTURE_TEMPLATE.md
-- docs/CURRENT_STATUS_TEMPLATE.md
+- 与真实游戏 onboarding 直接相关的轻量说明
+- SOP → Code Mapping
+- Deployment / Usage 补充文档
+
+应尽量读取。
+
+但任何 SHOULD READ 文件都不能替代上面的 MUST READ 权威规则。
 
 如果 SHOULD READ 文件缺失：
 
@@ -320,6 +357,158 @@ SOP 阅读报告可以进入下一阶段。
 在确认前：
 
 禁止进入 Phase 1。
+
+
+# 2.5 Real-Game Adoption Gate（Smoke Test 已验证）
+
+这一节用于约束以后真正 Clone Starter 建具体游戏站时的执行入口。
+
+它不是要求 Phase 0 / Phase 1 现在生成某个真实游戏的数据，
+而是要求 Starter 的 README / Usage / Execution Guidance
+能够支持并提醒以下工作流。
+
+## 2.5.1 Required Project Artifacts
+
+真实游戏项目在 implementation 前必须生成并维护：
+
+```text
+docs/
+├── PROJECT_BRIEF.md
+├── RESEARCH_SOURCES.md
+├── KEYWORD_RESEARCH.md
+├── COMPETITOR_ANALYSIS.md
+├── SITE_STRUCTURE.md
+└── CURRENT_STATUS.md
+```
+
+这些文件负责：
+
+- 项目输入
+- 事实来源
+- Discovery Research 证据
+- 关键词与意图
+- 竞品与 Gap
+- Site Structure
+- 当前状态与交接
+
+但它们：
+
+不得成为第二份 Runtime Page Inventory。
+
+
+## 2.5.2 Discovery Research Gate
+
+在最终确定：
+
+- SITE_STRUCTURE
+- structured runtime Page Inventory
+
+之前，
+
+必须执行 bounded Discovery Research。
+
+MUST：
+
+- Web / SERP discovery
+- competitor discovery
+- long-tail query discovery
+
+SHOULD when useful evidence exists：
+
+- YouTube
+- Steam Community / Steam Discussions
+- Reddit
+- Discord 或其他可访问的 player-question surface
+
+如果某个平台：
+
+- 无可用内容
+- 无有效证据
+- 当前无法访问
+
+应记录实际情况并继续。
+
+禁止为了完成 checklist：
+
+伪造搜索结果、社区问题、竞品或热度证据。
+
+
+## 2.5.3 Discovery Evidence ≠ Publishable Game Fact
+
+Discovery Research 可以用于：
+
+- keyword discovery
+- search intent
+- competitor structure
+- content gap
+- player questions
+- title / description emphasis
+- internal linking
+- page priority
+
+但不能仅凭：
+
+- SERP snippet
+- competitor article
+- YouTube commentary
+- Reddit / Discord / Steam Discussion
+
+就把内容升级为：
+
+Confirmed Game Fact。
+
+游戏事实必须继续遵循：
+
+`docs/SOURCE_POLICY.md`。
+
+
+## 2.5.4 Keyword ≠ Page
+
+不得机械执行：
+
+1 keyword
+=
+1 URL
+
+正确关系是：
+
+```text
+Keyword
+↓
+Search Intent
+↓
+Keyword Cluster
+↓
+Target Page
+```
+
+多个表达同一需求的关键词：
+
+优先合并到同一个页面意图。
+
+Discovery 只能：
+
+- refine keyword
+- refine title
+- refine internal links
+- refine priority
+- discover candidate pages
+
+不能自动制造大量 keyword-swapped thin pages。
+
+
+## 2.5.5 Human Scope Gate
+
+如果 Discovery Research 导致：
+
+- 新增 materially new page family
+- 删除已经批准的独立页面
+- 合并已经批准的独立页面
+- launch scope 发生实质变化
+
+必须停止并要求人工审核。
+
+不得自行修改最终 Runtime Page Inventory 后继续 Implementation。
 
 
 # 3. 产品边界
@@ -926,6 +1115,65 @@ Phase 1 必须：
 其他地方全部派生。
 
 
+## 8.1 Runtime Page Inventory 最终语义（Smoke Test Backport）
+
+真实 Starter 已验证：
+
+structured runtime Page Inventory
+
+是 publication SSOT。
+
+Markdown：
+
+- SITE_STRUCTURE.md
+- CURRENT_STATUS.md
+- 其他 planning artifacts
+
+可以引用：
+
+- Page ID
+- URL
+- 状态摘要
+
+但不能成为第二份人工维护的页面状态数据库。
+
+
+`publishedAt` 的最终语义：
+
+```text
+visibility = public
+AND
+publicationStatus = published
+→ publishedAt 必填
+```
+
+其他非 live 组合：
+
+例如：
+
+- public + draft
+- private + published
+- private + draft
+- unlisted
+
+允许省略 `publishedAt`。
+
+如果提供 `publishedAt`：
+
+仍必须满足当前合法 ISO 日期格式。
+
+注意：
+
+这只是字段必填语义。
+
+不得借此：
+
+- 新增状态
+- 重命名状态
+- 重新定义已有 visibility / publicationStatus 合法组合
+- 重构 Catalog 状态模型
+
+
 # 9. Game Fact：必须 Single Source of Truth
 
 除了页面状态，
@@ -1041,6 +1289,59 @@ Affected Pages
 等透明方案。
 
 
+## 9.1 Smallest Sufficient Fact Boundary
+
+Game Fact SSOT：
+
+不等于必须建立通用 Fact Engine。
+
+Afterworld Real-Game Smoke Test 已验证：
+
+当一个项目重复使用的确认事实：
+
+- 数量少
+- 类型清晰
+- 相对稳定
+
+可以优先使用：
+
+```text
+small typed project-level fact object
+↓
+Homepage / Guide / Other Consumers
+```
+
+例如：
+
+`src/data/game-profile.ts`
+
+这种直接、透明的方式。
+
+必须优先：
+
+简单 typed source
+>
+generic fact engine
+>
+repository / resolver / DSL / database
+
+只有多个真实游戏项目证明：
+
+简单直接引用已经无法满足复用、更新或一致性要求时，
+
+才允许升级抽象。
+
+禁止为了“未来可能有更多 Facts”：
+
+提前开发：
+
+- Universal Fact Engine
+- Generic Resolver
+- Fact Repository Layer
+- Expression Language
+- Dynamic Lookup Framework
+
+
 # 10. SOP 与 Starter 的关系
 
 GAME_SOP_2.1
@@ -1079,6 +1380,24 @@ Starter 可以保留：
 - ARCHITECTURE
 - Usage Guide
 - SOP → Code Mapping
+
+
+其中 README / Usage Guide 应保留一个轻量：
+
+`Start a New Game Site`
+
+入口。
+
+它只提醒：
+
+1. 遵循 `GAME_SOP_2.1`
+2. 完成 6 个 Project Artifacts
+3. 完成 Discovery Research
+4. 最终确定 structured runtime Page Inventory SSOT
+5. materially changed page scope 必须人工审核
+6. 获批后再进入 implementation
+
+不要把整套 SOP 复制进 Starter。
 
 
 但：
@@ -1133,14 +1452,14 @@ Starter 必须允许：
 - MDX
 
 
-内容至少应承载：
+内容至少应根据页面类型承载：
 
 - title
 - slug
 - description
 - pageType
 - priority
-- publishedAt
+- publishedAt（仅在适用的 live published 页面必填；非 live 页面可省略）
 - updatedAt
 - primaryKeyword
 - tags
@@ -1494,6 +1813,81 @@ Default Deployment Path
 以后新游戏站尽量不需要重新讨论部署平台。
 
 
+### Deployment Approval + Actual Target Verification
+
+架构方案必须明确区分：
+
+```text
+Build
+≠
+Deploy
+≠
+Preview
+≠
+Production Target
+≠
+Production Domain Launch
+```
+
+任何远端 deployment write：
+
+执行前必须：
+
+1. 说明准备执行的远端 mutation
+2. 明确 provider / project（如果已知）
+3. 获得用户授权
+
+执行后必须：
+
+1. 使用 provider 的只读 inspect / status 能力
+2. 检查实际 target
+3. 检查实际 state
+4. 再根据证据判断 Preview / Production
+
+禁止根据：
+
+- CLI 命令名称
+- 是否带 `--prod`
+
+单独推断 deployment target。
+
+
+特别是 Vercel：
+
+不得再假设：
+
+```text
+vercel deploy
+=
+Preview
+```
+
+真实 Smoke Test 已观察到：
+
+首次新项目的 `vercel deploy`
+即使没有 `--prod`
+
+仍可能被 provider 标记为：
+
+`production target`
+
+因此：
+
+只有实际 inspect 结果：
+
+才能作为 Preview / Production 分类证据。
+
+
+以下动作原则上视为独立授权范围：
+
+- Production alias
+- Production domain attach
+- DNS 修改
+- Public release / cutover
+
+除非用户已经在同一批准范围中明确授权。
+
+
 ## 5. Content + Data Model
 
 说明：
@@ -1727,6 +2121,20 @@ Phase 6 — Interaction
 Phase 7 — QA
 
 Phase 8 — Real Game Smoke Test
+
+Phase 9 — Post-Smoke-Test Backport
+
+用于：
+
+- 分类 SOP Gap / Starter Gap / Game-specific Finding
+- 只回灌真实验证出的通用问题
+- 保持 Stable Core 稳定
+- 同步 Starter onboarding / deployment guidance
+- 同步 Codex Master Prompt 执行入口
+
+不得因为一个真实游戏的特殊需求：
+
+直接污染 Starter Stable Core。
 
 
 Phase 1 禁止执行这些阶段。

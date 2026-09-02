@@ -88,6 +88,9 @@ and Firefox on real devices where practical.
 - [ ] Build audit reports remain below the documented starter budgets.
 - [ ] Ordinary pages reference no client JavaScript.
 - [ ] Search, filter, calculator, and planner scripts appear only on pages that use them.
+- [ ] Record explicit authorization before any deployment upload.
+- [ ] After deployment, inspect and record the provider-reported target and state; do not infer Preview or Production from the command name or CLI flags.
+- [ ] Treat production aliases, production domains, and DNS changes as separately authorized external writes.
 - [ ] Run a Lighthouse production audit on representative live URLs; record mobile results rather than assuming them from local bundle size.
 - [ ] Verify caching, compression, redirects, custom 404 behavior, and HTTPS on the selected host.
 - [ ] Verify analytics/cookie/legal requirements separately if the adopter adds those systems.

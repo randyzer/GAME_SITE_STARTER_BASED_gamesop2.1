@@ -47,6 +47,12 @@ function page(overrides: Partial<PageInventoryEntry> = {}) {
   return { ...basePage, ...overrides } satisfies PageInventoryEntry;
 }
 
+function omitPublishedAt(entry: PageInventoryEntry) {
+  const result: Partial<PageInventoryEntry> = { ...entry };
+  delete result.publishedAt;
+  return result;
+}
+
 describe("parsePageInventory", () => {
   it("accepts workflow fields and Astro's special 404 route", () => {
     const [notFoundPage] = parsePageInventory([
@@ -106,6 +112,54 @@ describe("parsePageInventory", () => {
         }),
       ]),
     ).toThrow(/primary keyword/i);
+  });
+
+  it("requires publishedAt for a public published page", () => {
+    expect(() => parsePageInventory([omitPublishedAt(basePage)])).toThrow(
+      /publishedAt/i,
+    );
+  });
+
+  it("allows public drafts and private pages to omit publishedAt", () => {
+    const inventory = parsePageInventory([
+      omitPublishedAt(
+        page({
+          pageId: "guide.draft",
+          route: "/guides/draft/",
+          pageType: "guide",
+          publicationStatus: "draft",
+          indexability: "noindex",
+          primaryKeyword: "draft game guide",
+        }),
+      ),
+      omitPublishedAt(
+        page({
+          pageId: "guide.private",
+          route: "/guides/private/",
+          pageType: "guide",
+          visibility: "private",
+          indexability: "noindex",
+          primaryKeyword: "private game guide",
+        }),
+      ),
+    ]);
+
+    expect(inventory.map((entry) => entry.publishedAt)).toEqual([
+      undefined,
+      undefined,
+    ]);
+  });
+
+  it("still validates publishedAt when a non-live page provides it", () => {
+    expect(() =>
+      parsePageInventory([
+        page({
+          publicationStatus: "draft",
+          indexability: "noindex",
+          publishedAt: "09-01-2026",
+        }),
+      ]),
+    ).toThrow(/publishedAt/i);
   });
 });
 

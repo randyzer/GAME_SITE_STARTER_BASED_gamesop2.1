@@ -45,20 +45,25 @@ contracts.
 
 See [architecture](docs/ARCHITECTURE_PROPOSAL.md), [content and data](docs/CONTENT_AND_DATA_GUIDE.md), [patch workflow](docs/PATCH_WORKFLOW.md), [deployment](docs/DEPLOYMENT.md), [release QA](docs/QA_CHECKLIST.md), and the latest [release audit](docs/RELEASE_AUDIT.md).
 
-## Adopt for a real game
+## Start a New Game Site
 
-1. Set the brand, real HTTPS domain, locale, navigation, homepage features, and
-   feature flags in `game.config.ts`. The shared mark, short name, tagline, and
-   locale label all render from this config.
-2. Declare each intended page in `src/data/page-inventory.json` before writing
-   content or adding route data.
-3. Add cited content/facts/tool definitions using the matching schema and
-   exact Inventory reference.
-4. Enable only modules whose pages and data are reviewed.
-5. Run `npm run patch:impact -- --entity-type hero --entity-id example-hero`
-   when a game patch changes an entity.
-6. Run the complete check/build/preview workflow and finish
-   `docs/QA_CHECKLIST.md` before release.
+1. Follow the authoritative
+   [`GAME_SOP_2.1`](https://github.com/randyzer/GAME_SOP_2.1) before adapting
+   the Starter.
+2. Complete `PROJECT_BRIEF.md`, `RESEARCH_SOURCES.md`,
+   `KEYWORD_RESEARCH.md`, `COMPETITOR_ANALYSIS.md`, `SITE_STRUCTURE.md`, and
+   `CURRENT_STATUS.md` for the new project.
+3. Complete Discovery Research before locking the page plan.
+4. Finalize the structured runtime Page Inventory SSOT; this Starter uses
+   `src/data/page-inventory.json` as that authority.
+5. Stop for human review if Discovery materially adds, removes, or merges page
+   scope.
+6. Enter implementation only after the artifacts, Inventory, and any material
+   scope change are approved.
+
+During implementation, configure `game.config.ts`, add cited content and data
+through the existing schemas, enable only reviewed modules, and finish the
+complete check/build/preview workflow in `docs/QA_CHECKLIST.md`.
 
 ## Feature flags
 

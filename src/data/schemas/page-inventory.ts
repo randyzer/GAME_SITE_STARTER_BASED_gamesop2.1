@@ -79,7 +79,7 @@ export const pageInventoryEntrySchema = z
     indexability: z.enum(["index", "noindex"]),
     title: z.string().trim().min(20).max(65),
     description: z.string().trim().min(50).max(170),
-    publishedAt: isoDateSchema,
+    publishedAt: isoDateSchema.optional(),
     updatedAt: isoDateSchema,
     primaryKeyword: z.string().trim().min(2).max(80),
     tags: z.array(z.string().trim().min(2).max(40)).min(1),
@@ -96,7 +96,20 @@ export const pageInventoryEntrySchema = z
     sources: z.array(provenanceSchema).min(1),
     confidence: confidenceSchema,
   })
-  .strict();
+  .strict()
+  .superRefine((entry, context) => {
+    if (
+      entry.visibility === "public" &&
+      entry.publicationStatus === "published" &&
+      !entry.publishedAt
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: `Live page "${entry.pageId}" requires publishedAt.`,
+        path: ["publishedAt"],
+      });
+    }
+  });
 
 export const pageInventorySchema = z
   .array(pageInventoryEntrySchema)

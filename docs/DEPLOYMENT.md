@@ -3,6 +3,26 @@
 Builds are static and produce `dist/`. Always replace the example canonical
 domain in `game.config.ts` before a public deployment.
 
+## Authorization and provider state
+
+Every deployment upload requires explicit operator authorization. A command
+name or CLI flag is not evidence of the resulting provider target: in
+particular, do not assume that `vercel deploy` or the absence of `--prod`
+guarantees a Preview deployment.
+
+After an authorized Vercel upload, inspect the returned deployment URL before
+classifying it:
+
+```bash
+vercel inspect <deployment-url>
+```
+
+Record the provider-reported target and state, and describe the deployment as
+Preview or Production only when that result supports the label. Creating or
+changing a production alias, attaching a production domain, and changing DNS
+are separate external writes that each require explicit authorization. An
+upload authorization does not authorize any of those actions.
+
 ## Cloudflare Workers static assets
 
 Wrangler 4 is pinned as a development dependency. `wrangler.jsonc` serves only
